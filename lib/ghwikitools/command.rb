@@ -36,11 +36,21 @@ module GHWikiTools
         @description = msg
       end
 
-      # Get 
+      # Get subcommand.
+      #
+      # @param argv [Array<String>]
+      #   command arguments
+      # @return [Command]
+      #   subcommand
       def get(argv)
         @toplevel_options.order!(argv).tap do |_argv|
           name, _argv = _argv
-          return Command.table[name.to_sym].new(_argv)
+          if name
+            return Command.table[name.to_sym].new(_argv)
+          else
+            @table[:list].new([]).run
+            exit
+          end
         end
       rescue => e
         abort(e.message)
@@ -51,7 +61,6 @@ module GHWikiTools
     #   command arguments
     def initialize(argv)
       @argv = argv
-      @optparse = make_option_parser
     end
 
     # Run the command.
