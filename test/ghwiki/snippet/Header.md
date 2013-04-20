@@ -1,0 +1,1 @@
+Languages: [[English|<%= @page.wikiname %>]] | [[日本語|<%= @page.wikiname(:ja) %>]]
