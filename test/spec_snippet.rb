@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+require "ghwikitools"
 
 GHWikiTools.dir = File.join(File.dirname(__FILE__), "ghwiki")
 
@@ -15,7 +16,7 @@ describe "GHWikiTools::Snippet" do
 
   it "should render the snippet content with page informations" do
     page = Page.by_filename("Page-markdown-1.md")
-    snippet = Snippet.by_filename("Header.md")
+    snippet = Snippet.by_filename("_Header.md")
     snippet.render(page).should ==
       "Languages: [[English|Page-markdown-1]] | [[日本語|Page-markdown-1.ja]]"
   end

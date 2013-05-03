@@ -1,3 +1,5 @@
+require "ghwikitools"
+
 GHWikiTools.dir = File.join(File.dirname(__FILE__), "ghwiki")
 
 describe "GHWikiTools" do

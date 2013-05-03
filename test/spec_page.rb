@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+require "ghwikitools"
 
 GHWikiTools.dir = File.join(File.dirname(__FILE__), "ghwiki")
 
@@ -7,7 +8,7 @@ include GHWikiTools
 describe "GHWikiTools::Page" do
   it "should get all pages" do
     Page.all.tap do |pages|
-      pages.size.should == 4
+      pages.size.should == 6
       wikinames = pages.map{|page| page.wikiname}.uniq
       wikinames.should.include "Page-markdown-1"
       wikinames.should.include "Page-markdown-2"
@@ -37,6 +38,12 @@ describe "GHWikiTools::Page" do
   it "should get wikiname of the language" do
     page = Page.by_filename("Page-markdown-1.md")
     page.wikiname(:ja).should == "Page-markdown-1.ja"
+  end
+
+  it "should find snippets" do
+    page = Page.by_filename("Page-markdown-snippets.md")
+    snippets = page.find_snippets
+    snippets.size.should == 5
   end
 
   it 'should get the page content with inserting the header' do
