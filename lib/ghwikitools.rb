@@ -2,6 +2,7 @@ require "pathname"
 require "erb"
 require "thor"
 require "iso-639"
+require "forwardablex"
 
 require "ghwikitools/version"
 require "ghwikitools/page"

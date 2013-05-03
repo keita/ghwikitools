@@ -105,32 +105,18 @@ module GHWikiTools
 
     # Insert a header snippet metadata.
     #
-    # @return [void]
+    # @return [Boolean]
+    #   true if header metadata was inserted
     def insert_header
-      return if @name[0] == "_"
-      return unless Snippet.by_filename("_Header.md").path.exist?
-      unless find_snippet_metadata.include?("Header")
-        content = @path.read
-        header = "<!-- >>> Header -->\n\n<!-- <<< Header -->\n\n"
-        @path.open("w+") {|f| f.write(header + content)}
-        return true
-      end
-      return false
+      insert_common_snippet("Header", :top)
     end
 
     # Insert a footer snippet metadata.
     #
-    # @return [void]
+    # @return [Boolean]
+    #   true if footer metadata was inserted
     def insert_footer
-      return if @name[0] == "_"
-      return unless Snippet.by_filename("_Footer.md").path.exist?
-      unless find_snippet_metadata.include?("Footer")
-        content = @path.read
-        footer = "\n\n<!-- >>> Footer -->\n\n<!-- <<< Footer -->"
-        @path.open("w+") {|f| f.write(content + footer)}
-        return true
-      end
-      return true
+      insert_common_snippet("Footer", :bottom)
     end
 
     # Update sinppets content in the page. Return true if the page is changed.
@@ -175,6 +161,8 @@ module GHWikiTools
           content.gsub(snippet_regexp(snippet.name)) do
             "%s\n\n%s\n\n%s" % [$1, snippet.render(self), $3]
           end
+        else
+          content
         end
       end
     end
@@ -189,7 +177,42 @@ module GHWikiTools
       end
     end
 
+    # Return true if the page includes snippet metadata that have the name.
+    #
+    # @param [String]
+    #   snippet name
+    # @return [Boolean]
+    #   true if the page includes snippet metadata that have the name
+    def include_snippet?(name)
+      find_snippet_metadata.include?(name)
+    end
+
     private
+
+    # Insert common snippet.
+    #
+    # @param name [String]
+    #   snippet name
+    # @param pos [Symbol]
+    #   :top or :bottom
+    # @return [Boolean]
+    #   true if the snippet metadata was inserted.
+    def insert_common_snippet(name, pos)
+      return false if @name[0] == "_"
+      return false unless Snippet.by_filename("_%s.md" % name).path.exist?
+      unless find_snippet_metadata.include?(name)
+        metadata = "<!-- >>> %s -->\n\n<!-- <<< %s -->" % [name, name]
+        case pos
+        when :top
+          content = metadata + "\n\n" + @path.read
+        when :bottom
+          content = @path.read + "\n\n" + metadata
+        end
+        @path.open("w+") {|f| f.write(content)}
+        return true
+      end
+      return false
+    end
 
     # Return a regexp of the named snippet.
     #

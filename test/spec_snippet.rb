@@ -8,9 +8,10 @@ include GHWikiTools
 describe "GHWikiTools::Snippet" do
   it "should get all snippets" do
     Snippet.all.tap do |snippets|
-      snippets.size.should == 1
+      snippets.size.should == 2
       names = snippets.map{|snippet| snippet.name}.uniq
       names.should.include "Header"
+      names.should.include "Footer"
     end
   end
 

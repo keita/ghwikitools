@@ -1,6 +1,14 @@
 module GHWikiTools
   # Command is a class for making sub commands of ghwikitools.
   class Command < Thor
+    class << self
+      attr_accessor :test_mode
+    end
+
+    no_commands do
+      forward :class, :test_mode
+    end
+
     class_option :help, :type => :boolean, :aliases => '-h', :desc => 'show help message'
     class_option :directory, :type => :string, :aliases => '-d', :desc => "repository directory path", :banner => "DIR"
 
@@ -36,14 +44,20 @@ module GHWikiTools
       end
     end
 
-    no_tasks do
-      def invoke_task(task, *args)
+    no_commands do
+      define_method(:invoke_command) do |command, *args|
         if options[:help]
-          Command.task_help(shell, task.name)
+          Command.task_help(shell, command.name)
         else
-          super
+          super(command, *args)
         end
       end
+    end
+
+    private
+
+    def puts(*args)
+      Kernel.puts(*args) unless test_mode
     end
   end
 end
