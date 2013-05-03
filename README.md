@@ -2,6 +2,8 @@
 
 ghwikitools is a set of GitHub wiki management tools.
 
+[![Gem Version](https://badge.fury.io/rb/ghwikitools.png)](http://badge.fury.io/rb/ghwikitools) [![Build Status](https://travis-ci.org/keita/ghwikitools.png?branch=master)](https://travis-ci.org/keita/ghwikitools) [![Coverage Status](https://coveralls.io/repos/keita/ghwikitools/badge.png?branch=master)](https://coveralls.io/r/keita/ghwikitools) [![Code Climate](https://codeclimate.com/github/keita/ghwikitools.png)](https://codeclimate.com/github/keita/ghwikitools)
+
 ## Functions
 
 - Snippets
@@ -63,9 +65,13 @@ This command shows all ghwikitools commands.
 
 This command inserts header and footer metadata, and updates all snippets.
 
-## Licence
+## Documentation
 
-ghwikitools is free software distributed under MIT licence.
+- [API Documentation](http://www.rubydoc.info/gems/ghwikitools/)
+
+## License
+
+ghwikitools is free software distributed under MIT license.
 
 ## Contributing
 
