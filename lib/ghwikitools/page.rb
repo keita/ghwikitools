@@ -39,11 +39,20 @@ module GHWikiTools
       #   basename(String), language name(Symbol), and extensiton(Symbol)
       def parse_filename(filename)
         filename.split(".").tap do |array|
-          basename = array[0].tap{|name| break name[0] == "_" ? name[1..-1] : name }
+          # extension
+          ext = array[-1].to_sym
+
+          # language
+          lang = array[-2].to_sym if array.size >= 3 and ISO_639.find(array[-2])
+
+          # basename
+          basename = (lang ? array[0..-3] : array[0..-2]).join(".").tap do |name|
+            break (name[0] == "_" and self == Snippet) ? name[1..-1] : name
+          end
+
+          # path
           path = dir + filename
-          lang = array[1].to_sym if array.size == 3
-          ext = lang ? array[2] : array[1]
-          ext = ext.to_sym if ext
+
           return path, basename, lang, ext
         end
       end
@@ -99,6 +108,7 @@ module GHWikiTools
     # @return [void]
     def insert_header
       return if @name[0] == "_"
+      return unless Snippet.by_filename("_Header.md").path.exist?
       unless find_snippet_metadata.include?("Header")
         content = @path.read
         header = "<!-- >>> Header -->\n\n<!-- <<< Header -->\n\n"
@@ -113,6 +123,7 @@ module GHWikiTools
     # @return [void]
     def insert_footer
       return if @name[0] == "_"
+      return unless Snippet.by_filename("_Footer.md").path.exist?
       unless find_snippet_metadata.include?("Footer")
         content = @path.read
         footer = "\n\n<!-- >>> Footer -->\n\n<!-- <<< Footer -->"

@@ -8,7 +8,7 @@ include GHWikiTools
 describe "GHWikiTools::Page" do
   it "should get all pages" do
     Page.all.tap do |pages|
-      pages.size.should == 6
+      pages.size.should == 7
       wikinames = pages.map{|page| page.wikiname}.uniq
       wikinames.should.include "Page-markdown-1"
       wikinames.should.include "Page-markdown-2"
@@ -33,6 +33,14 @@ describe "GHWikiTools::Page" do
     page.lang.should == :ja
     page.ext.should == :md
     page.should.valid
+  end
+
+  it "should get language and extension" do
+    Page.by_filename("Page-markdown-4.abc.ja.md").tap do |page|
+      page.wikiname.should == "Page-markdown-4.abc"
+      page.lang.should == :ja
+      page.ext.should == :md
+    end
   end
 
   it "should get wikiname of the language" do

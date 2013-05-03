@@ -1,99 +1,48 @@
 module GHWikiTools
   # Command is a class for making sub commands of ghwikitools.
-  class Command
-    @table = Hash.new {|hash, key| abort("unknown command %s" % key)}
+  class Command < Thor
+    class_option :help, :type => :boolean, :aliases => '-h', :desc => 'show help message'
+    class_option :directory, :type => :string, :aliases => '-d', :desc => "repository directory path", :banner => "DIR"
 
-    @toplevel_options = OptionParser.new.tap do |opt|
-      opt.on("--help") do
-        @table[:list].new([]).run
-        exit
+    desc "delete_snippet NAME", "Delete snippet metadata"
+    def delete_snippet(name)
+      if options[:directory]
+        puts "repositoy: %s" % options[:directory]
+        GHWikiTools.dir = options[:directory]
       end
-    end
-
-    class << self
-      # @api private
-      attr_reader :table
-
-      # @return [String]
-      #   description of the command
-      attr_reader :description
-
-      # Declare the command name.
-      #
-      # @param name [Symbol]
-      #   command name
-      # @return [void]
-      def command(name)
-        Command.table[name] = self
-      end
-
-      # Describe the aim of the command.
-      #
-      # @param msg [String]
-      #   message
-      # @return [void]
-      def describe(msg)
-        @description = msg
-      end
-
-      # Get subcommand.
-      #
-      # @param argv [Array<String>]
-      #   command arguments
-      # @return [Command]
-      #   subcommand
-      def get(argv)
-        @toplevel_options.order!(argv).tap do |_argv|
-          name, _argv = _argv
-          if name
-            return Command.table[name.to_sym].new(_argv)
-          else
-            @table[:list].new([]).run
-            exit
-          end
-        end
-      rescue => e
-        abort(e.message)
-      end
-    end
-
-    # @param argv [Array<String>]
-    #   command arguments
-    def initialize(argv)
-      @argv = argv
-    end
-
-    # Run the command.
-    #
-    # @return [void]
-    def run
-      raise NotImplementedError
-    end
-  end
-
-  # CommandList provides the definition of "ghwikitools list".
-  class CommandList < Command
-    command :list
-    describe "print all commands"
-
-    def run
-      puts "commands:"
-      Command.table.keys.each do |key|
-        puts "  %-10s %s" % [key, Command.table[key].description]
-      end
-    end
-  end
-
-  # CommandUpdate provides the definition of "ghwikitools update".
-  class CommandUpdate < Command
-    command :update
-    describe "update header, footer, and other snippets"
-
-    def run
       GHWikiTools::Page.all.each do |page|
-        page.insert_header
-        page.insert_footer
-        page.update_snippets
+        if page.delete_snippet(name)
+          puts 'deleted snippet "%s" in the page %s' % [name, page.name]
+        end
+      end
+    end
+
+    desc "update", "Update header, footer, and other snippets"
+    def update
+      if options[:directory]
+        puts "repositoy: %s" % options[:directory]
+        GHWikiTools.dir = options[:directory]
+      end
+      GHWikiTools::Page.all.each do |page|
+        if page.insert_header
+          puts 'insert "Header" snippet metadata in the page "%s"' % page.wikiname
+        end
+        if page.insert_footer
+          puts 'insert "Footer" snippet metadata in the page "%s"' % page.wikiname
+        end
+        if page.update_snippets
+          puts 'update snippets in the page "%s"' % page.wikiname
+        end
+      end
+    end
+
+    no_tasks do
+      def invoke_task(task, *args)
+        if options[:help]
+          Command.task_help(shell, task.name)
+        else
+          super
+        end
       end
     end
   end

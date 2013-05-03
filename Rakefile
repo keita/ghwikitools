@@ -2,7 +2,7 @@ require "bundler/gem_tasks"
 
 desc 'Test specs'
 task 'test' do
-  sh "bundle exec bacon -a -r ghwikitools"
+  sh "bundle exec bacon -a -r simplecov -r ghwikitools"
 end
 
 desc 'Generate API document'

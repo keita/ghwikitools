@@ -3,5 +3,5 @@
 require 'ghwikitools'
 
 Version = GHWikiTools::VERSION
-GHWikiTools::Command.get(ARGV).run
+GHWikiTools::Command.start
 

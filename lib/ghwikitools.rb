@@ -1,6 +1,7 @@
 require "pathname"
 require "erb"
-require 'optparse'
+require "thor"
+require "iso-639"
 
 require "ghwikitools/version"
 require "ghwikitools/page"
